@@ -5,9 +5,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 
 class MainActivity : AppCompatActivity() {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -15,9 +18,14 @@ class MainActivity : AppCompatActivity() {
         val footballView: ImageView = findViewById(R.id.footballImageView)
         val leftLayout: View = findViewById(R.id.leftLayout)
         val rightLayout: View = findViewById(R.id.rightLayout)
+        val relt: View = findViewById(R.id.rel)
+        val originalLayout: View = findViewById(R.id.originalLayout)
+        val moveToRightButton : Button = findViewById(R.id.moveToRightButton)
 
-        val originalX = footballView.x
-        val originalY = footballView.y
+        moveToRightButton.setOnClickListener {
+            moveBallToRightLayout(footballView, rightLayout)
+        }
+
 
         footballView.setOnTouchListener { _, event ->
             when (event.action) {
@@ -46,9 +54,11 @@ class MainActivity : AppCompatActivity() {
                         footballView.y = rightLayout.y + (rightLayout.height - footballView.height) / 2
                     }
                     // If the football is dropped outside the layouts, reset its position
-                    else {
-                        footballView.x = originalX
-                        footballView.y = originalY
+                    else if (isViewIntersecting(footballView, relt)) {
+
+                            footballView.x = originalLayout.x + (originalLayout.width - footballView.width) / 2
+                            footballView.y = originalLayout.y + (originalLayout.height - footballView.height) / 2
+
                     }
 
                     true
@@ -66,5 +76,10 @@ class MainActivity : AppCompatActivity() {
         val rect2 = Rect()
         view2.getHitRect(rect2)
         return Rect.intersects(rect1, rect2)
+    }
+
+    private fun moveBallToRightLayout(foot: ImageView, right: View) {
+        foot.x = right.x + (right.width - foot.width) / 2
+        foot.y = right.y + (right.height - foot.height) / 2
     }
 }
